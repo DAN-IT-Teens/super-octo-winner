@@ -27,21 +27,27 @@ const buildScript = () => {
     .pipe(browserSync.stream())
 }
 
+const buildImages = () => {
+    return gulp.src('app/images/*.png')
+        .pipe(gulp.dest('build/images/'))
+}
+
 const build = () => {
     buildHtml();
     buildScript();
     buildStyles();
+    buildImages();
 }
 
 const start = () => {
     build();
     browserSync.init({
         server: {
-            baseDir: '/'
+            baseDir: './build'
         }
     })
-    gulp.watch('app/js/**/*.js', buildScript);
-    gulp.watch('app/css/**/*.scss', buildStyles);
+    gulp.watch('app/js/**/*.js', buildScript).on('change', browserSync.reload);
+    gulp.watch('app/css/**/*.scss', buildStyles).on('change', browserSync.reload);
     gulp.watch(['app/pages/**/*.html', 'app/index.html'], buildHtml).on('change', browserSync.reload);
 }
 
